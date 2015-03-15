@@ -5,6 +5,8 @@ import ext_systems_support.ExtSystem2Adapter;
 
 public class Test {
 
+    //FIXME: how about JUnit? plus some kind of a standard layout? main/src/java main/src/test
+    // will we use maven to build & run or may be smth else?
     public static void main(String Args[]) throws Exception {
         patternsCheck();
         saveRestoreCheck();
@@ -15,7 +17,7 @@ public class Test {
     public static void patternsCheck() {
         Client client1 = new Client("Alexander", "Bogdanov", "123AB");
         Client client2 = new Client("Vsevolod", "Sayapin", "456VS");
-        Client client3 = new Client("Anton", "Pushkarev", "789AP");
+        Client client3 = new Client("Anton", "Pushkarev", "789AP"); // I'm pleased ;-)
 
         Client client4 = new Client("Anton", "Pushkarev", "789ap");
         Client client5 = new Client("Vsevolodddddddddddddd", "Sayapin", "456VS");
