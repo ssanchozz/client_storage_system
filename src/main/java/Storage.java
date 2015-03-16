@@ -1,9 +1,11 @@
-import client_entities.Client;
-import ext_systems_support.ExtSystemsInterface;
+import client.entities.Client;
+import ext.systems.ExtSystemsInterface;
 
 //TODO: expand *
 import java.io.*;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //TODO: ideally it can also implement an interface
 public class Storage {
@@ -46,6 +48,20 @@ public class Storage {
     public synchronized Client find() {
 
         return null;
+    }
+
+    private static boolean checkWithRegExp(String name, String surname, String passport) { //todo: завести эксепшн
+        //FIXME: may be validate separately & put strings to constants?
+        Pattern nameAndSurPattern = Pattern.compile("^[a-zA-Z]{1,20}$");
+        Pattern passportPattern = Pattern.compile("^[A-Z0-9]{5}$");
+
+        Matcher nameMatcher = nameAndSurPattern.matcher(name);
+        Matcher surnameMatcher = nameAndSurPattern.matcher(surname);
+        Matcher passportMatcher = passportPattern.matcher(passport);
+
+        return nameMatcher.matches()
+                && surnameMatcher.matches()
+                && passportMatcher.matches();
     }
 
 }

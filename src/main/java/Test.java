@@ -1,7 +1,7 @@
-import client_entities.Client;
-import client_entities.Order;
-import ext_systems_support.ExtSystem1Adapter;
-import ext_systems_support.ExtSystem2Adapter;
+import client.entities.Client;
+import client.entities.Order;
+import ext.systems.ExtSystem1Adapter;
+import ext.systems.ExtSystem2Adapter;
 
 public class Test {
 

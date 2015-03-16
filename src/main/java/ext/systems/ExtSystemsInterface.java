@@ -1,7 +1,7 @@
 //FIXME: same as for client entities, generally underscores look a bit scary here
-package ext_systems_support;
+package ext.systems;
 
-import client_entities.Client;
+import client.entities.Client;
 
 import java.util.ArrayList;
 

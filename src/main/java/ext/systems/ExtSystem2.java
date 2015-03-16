@@ -1,4 +1,4 @@
-package ext_systems_support;
+package ext.systems;
 
 public class ExtSystem2 {
 
