@@ -1,48 +1,50 @@
 import client.entities.Client;
-import ext.systems.ExtSystemsInterface;
+import ext.systems.ExtSystemsReader;
 
-//TODO: expand *
 import java.io.*;
-import java.util.ArrayList;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+//TODO: expand *
 
 //TODO: ideally it can also implement an interface
 public class Storage {
 
-    private ArrayList<Client> clients; // думаю мапу использовать вместо листа
+    public static final String NAME_PATTERN = "^[a-zA-Z]{1,20}$";
+    public static final String SURNAME_PATTERN = "^[a-zA-Z]{1,20}$";
+    public static final String PASSPORT_PATTERN = "^[A-Z0-9]{5}$";
 
-    public Storage() {
-        clients = new ArrayList<Client>();
+    private String storageFileName;
+
+    //private ArrayList<Client> clients;
+    private TreeSet<Client> clients; // todo: можно потом запилить, чтобы клиенты хранились упорядоченно по имени и фамилии
+                                     // todo: реализовать Comparable
+    public Storage(String storageFileName) {
+        if (storageFileName == null) throw new IllegalArgumentException();
+        clients = new TreeSet<Client>();
+        this.storageFileName = storageFileName;
     }
 
     //FIXME: I bet there might be something more to add
     public synchronized void save() throws IOException {  // перед началом работы
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("storage.out"));
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(storageFileName));
         out.writeObject(clients);
     }
 
     //FIXME: and here too. Throws look a bit scary
-    public synchronized void restore() throws IOException, ClassNotFoundException { // при завершении работы
-        //FIXME I was told 'storage.out' was an input file for another system, you know what to do, eh?
-        ObjectInputStream in = new ObjectInputStream(new FileInputStream("storage.out"));
-        ArrayList<Client> clients = (ArrayList<Client>)in.readObject();
+    public synchronized void restore() throws IOException, ClassNotFoundException { // при завершении работы  //todo: добавить свой эксепшн
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(storageFileName));
+        TreeSet<Client> clients = (TreeSet<Client>)in.readObject();
         this.clients = clients;
     }
 
-    //FIXME: hmmm... I would think of Storage & Parser, also it may ready data to nowhere unless they are saved
-    public synchronized ArrayList<Client> getDataFromExternalSystem(ExtSystemsInterface esi) {
-        return esi.readData();
+    public synchronized void restoreDataFromExternalSystem(ExtSystemsReader esi) {
+        this.clients = esi.readData();
     }
 
     public synchronized void insert(Client client) {
-        //FIXME: let's add the same client a couple of times
         clients.add(client);
-    }
-
-    public synchronized Client get(int index) { // Скорее всего не нужен, т.к. непонятно,
-        return clients.get(index);              // что будем считывать, если другие потоки будут писать
-        //TODO: why get by index?, your comment sounds a bit scary to me ;-)
     }
 
     public synchronized Client find() {
@@ -51,12 +53,12 @@ public class Storage {
     }
 
     private static boolean checkWithRegExp(String name, String surname, String passport) { //todo: завести эксепшн
-        //FIXME: may be validate separately & put strings to constants?
-        Pattern nameAndSurPattern = Pattern.compile("^[a-zA-Z]{1,20}$");
-        Pattern passportPattern = Pattern.compile("^[A-Z0-9]{5}$");
+        Pattern namePattern = Pattern.compile(NAME_PATTERN);
+        Pattern SurnamePattern = Pattern.compile(SURNAME_PATTERN);
+        Pattern passportPattern = Pattern.compile(PASSPORT_PATTERN);
 
-        Matcher nameMatcher = nameAndSurPattern.matcher(name);
-        Matcher surnameMatcher = nameAndSurPattern.matcher(surname);
+        Matcher nameMatcher = namePattern.matcher(name);
+        Matcher surnameMatcher = SurnamePattern.matcher(surname);
         Matcher passportMatcher = passportPattern.matcher(passport);
 
         return nameMatcher.matches()

@@ -1,7 +1,7 @@
 import client.entities.Client;
 import client.entities.Order;
-import ext.systems.ExtSystem1Adapter;
-import ext.systems.ExtSystem2Adapter;
+import ext.systems.ExtSystemOneFileAdapter;
+import ext.systems.ExtSystemTwoFilesAdapter;
 
 public class Test {
 
@@ -43,8 +43,8 @@ public class Test {
 
     public static void extSystemsReadingCheck() {
         Storage s = new Storage();
-        s.getDataFromExternalSystem(new ExtSystem1Adapter());
-        s.getDataFromExternalSystem(new ExtSystem2Adapter());
+        s.restoreDataFromExternalSystem(new ExtSystemOneFileAdapter());
+        s.restoreDataFromExternalSystem(new ExtSystemTwoFilesAdapter());
     }
 
     // Нужно написать тесты для многопоточного чтения/записи

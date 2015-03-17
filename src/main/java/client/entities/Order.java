@@ -1,4 +1,3 @@
-// FIXME: I'd suggest 'package domain' as it has domain objects
 package client.entities;
 
 import java.io.Serializable;
