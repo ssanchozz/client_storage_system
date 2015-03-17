@@ -1,12 +1,17 @@
-import client.entities.Client;
-import ext.systems.ExtSystemsReader;
-
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//TODO: expand *
+import client.entities.Client;
+import client.entities.Order;
+import ext.systems.ExtSystemsReader;
 
 //TODO: ideally it can also implement an interface
 public class Storage {
@@ -17,13 +22,13 @@ public class Storage {
 
     private String storageFileName;
 
-    //private ArrayList<Client> clients;
+    //TODO in our case we don't care about the order and we'll access the store by key
     private TreeSet<Client> clients; // todo: можно потом запилить, чтобы клиенты хранились упорядоченно по имени и фамилии
                                      // todo: реализовать Comparable
     public Storage(String storageFileName) {
-        if (storageFileName == null) throw new IllegalArgumentException();
         clients = new TreeSet<Client>();
-        this.storageFileName = storageFileName;
+        this.storageFileName = Objects.requireNonNull(
+                storageFileName, "storageFileName can't be null");;
     }
 
     //FIXME: I bet there might be something more to add
@@ -32,21 +37,47 @@ public class Storage {
         out.writeObject(clients);
     }
 
-    //FIXME: and here too. Throws look a bit scary
+    //FIXME: and here too. Throws look a bit scary. What about throws StorageException?
     public synchronized void restore() throws IOException, ClassNotFoundException { // при завершении работы  //todo: добавить свой эксепшн
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(storageFileName));
         TreeSet<Client> clients = (TreeSet<Client>)in.readObject();
         this.clients = clients;
     }
 
-    public synchronized void restoreDataFromExternalSystem(ExtSystemsReader esi) {
+    /*public synchronized void restoreDataFromExternalSystem(ExtSystemsReader esi) {
         this.clients = esi.readData();
-    }
+    }*/
 
-    public synchronized void insert(Client client) {
+    /**
+     * Adds a new client together with its orders
+     * @param client
+     */
+    public synchronized void add(Client client) {
         clients.add(client);
     }
+    
+    /**
+     * Adds an order to an existing client.
+     * @param client
+     * @param order
+     * @throws StorageException If the client does not exist, throws the exception.
+     */
+    public synchronized void addOrders(Client client, Order order) throws StorageException{
+        
+    }
+    
+    /**
+     * Adds a list of orders to an existing client.
+     * @param client
+     * @param orders
+     * @throws StorageException If the client does not exist, throws the exception.
+     */
+    public synchronized void addOrders(Client client, List<Order> orders) throws StorageException{
+        
+    }
 
+    //TODO more logically would be to search by ClientKey
+    // else you'll pass a client without orders and return the same + orders
     public synchronized Client find() {
 
         return null;

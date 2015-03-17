@@ -5,11 +5,9 @@ import java.util.LinkedHashMap;
 
 public class Client implements Serializable {
 
-    //FIXME: my manager says we're going to have 1000000 orders. How would I search thought them?
-    // Немножно непонятно, что имеется ввиду. Т.е. мы будем как-то искать заказ? Как? Тоже по трем полям? Или только по номеру?
-    // или и по номеру и по дате?
-    // то, что я ниже поменял, пока не окончательно, подумаю, как ответишь)))
-    //private ArrayList<Order> orders = new ArrayList<Order>();
+    // anton: let's use the number & the date to search through the orders (I just would like you to use a custom key)
+    // explain why LinkedHashMap
+    // user OrderKey here as a key
     private LinkedHashMap<String, Order> orders = new LinkedHashMap<String, Order>(); // Мапа будет с номером заказа и заказом
     private String name;                                                              // номер заказа - ключ, однозначно идентифицирует заказ клиента
     private String surname;
@@ -23,6 +21,9 @@ public class Client implements Serializable {
         this.passport = passport;
     }
 
+    // FIXME: I could break this code by getting a client from the store,
+    // changing its orders and... that's it! I don't have to push it back...
+    // everything will be done for me. Nice hacking!
     public LinkedHashMap<String, Order> getOrders() {
         return orders;
     }
@@ -55,6 +56,8 @@ public class Client implements Serializable {
         this.passport = passport;
     }
 
+    //TODO: you've broken the contract for equals
+    // and in addition it's NPE-prone. Use java.util.Objects for checks
     public boolean equals(Object anObject) {
         if (this == anObject) {
             return true;
