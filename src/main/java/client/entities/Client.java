@@ -1,66 +1,65 @@
 package client.entities;
 
-import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-public class Client implements Serializable {
+public class Client implements Externalizable {
 
-    // anton: let's use the number & the date to search through the orders (I just would like you to use a custom key)
-    // explain why LinkedHashMap
-    // user OrderKey here as a key
-    // Alex: LinkedHashMap, т.к. думал, что неплохо бы хранить в порядке вставки заказов. Только эта причина.
-    private HashMap<OrderKey, Order> orders = new HashMap<OrderKey, Order>();
-    private String name;
-    private String surname;
-    private String passport;
+    private ClientKey key;
+    private String comment;
 
-    public Client() {}
+    private Map<OrderKey, Order> orders;
 
-    public Client(String name, String surname, String passport) {
-        this.name = name;
-        this.surname = surname;
-        this.passport = passport;
+    protected Client() {
     }
 
-    // FIXME: I could break this code by getting a client from the store,
-    // changing its orders and... that's it! I don't have to push it back...
-    // everything will be done for me. Nice hacking!
-    // Alex: вот здесь вопрос. Во-первых, в коллекциях доступен такой же хак) Что в нем плохого?
-    // во-вторых, я вижу два варианта решения:
-    //          1) убрать сеттеры из Order. Тогда мы получим гемморой с обратным пушем ордера, если что-то в нем поменяем;
-    //          2) выдавать клон коллекции orders, но тогда мы памяти что-то много используем непонятно зачем.
-    public HashMap<OrderKey, Order> getOrders() {
-        return orders;
+    public Client(ClientKey key, String comment) {
+        this(key, comment, new HashMap<OrderKey, Order>());
     }
 
-    public void setOrders(HashMap<OrderKey, Order> orders) {
-        this.orders = orders;
+    public Client(ClientKey key, String comment, Map<OrderKey, Order> orders) {
+        this.key = Objects.requireNonNull(key);
+        this.comment = comment;
+        this.orders = Objects.requireNonNull(orders);
     }
 
-
-    public String getName() {
-        return name;
+    public List<Order> getOrders() {
+        List<Order> result = new ArrayList<>();
+        for (Order o : orders.values()) {
+            result.add(new Order(o));
+        }
+        return result;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOrders(List<Order> source) {
+        Objects.requireNonNull(source);
+        orders.clear();
+        for (Order o : source) {
+            this.orders.put(o.getKey(), o);
+        }
     }
 
-    public String getSurname() {
-        return surname;
+    public ClientKey getKey() {
+        return key;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setKey(ClientKey key) {
+        this.key = Objects.requireNonNull(key);
     }
 
-    public String getPassport() {
-        return passport;
+    public String getComment() {
+        return comment;
     }
 
-    public void setPassport(String passport) {
-        this.passport = passport;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     @Override
@@ -68,14 +67,31 @@ public class Client implements Serializable {
         if (this == anObject) {
             return true;
         }
-        if (anObject instanceof Client) {
-            Client anotherClient = (Client) anObject;
-            if (Objects.equals(this.name, anotherClient.getName())
-             && Objects.equals(this.surname, anotherClient.getSurname())
-             && Objects.equals(this.passport, anotherClient.getPassport()))
-                return true;
+
+        if (!(anObject instanceof Client)) {
+            return false;
         }
-        return false;
+
+        Client anotherClient = (Client) anObject;
+        return key.equals(anotherClient.getKey());
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException,
+            ClassNotFoundException {
+        // TODO Auto-generated method stub
+
     }
 
 }
