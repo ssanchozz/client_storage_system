@@ -1,7 +1,7 @@
 package client.entities;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Client implements Serializable {
@@ -10,7 +10,7 @@ public class Client implements Serializable {
     // explain why LinkedHashMap
     // user OrderKey here as a key
     // Alex: LinkedHashMap, т.к. думал, что неплохо бы хранить в порядке вставки заказов. Только эта причина.
-    private LinkedHashMap<OrderKey, Order> orders = new LinkedHashMap<OrderKey, Order>();
+    private HashMap<OrderKey, Order> orders = new HashMap<OrderKey, Order>();
     private String name;
     private String surname;
     private String passport;
@@ -30,13 +30,14 @@ public class Client implements Serializable {
     // во-вторых, я вижу два варианта решения:
     //          1) убрать сеттеры из Order. Тогда мы получим гемморой с обратным пушем ордера, если что-то в нем поменяем;
     //          2) выдавать клон коллекции orders, но тогда мы памяти что-то много используем непонятно зачем.
-    public LinkedHashMap<OrderKey, Order> getOrders() {
+    public HashMap<OrderKey, Order> getOrders() {
         return orders;
     }
 
-    public void setOrders(LinkedHashMap<OrderKey, Order> orders) {
+    public void setOrders(HashMap<OrderKey, Order> orders) {
         this.orders = orders;
     }
+
 
     public String getName() {
         return name;

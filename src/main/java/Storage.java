@@ -1,10 +1,11 @@
 import client.entities.Client;
 import client.entities.Order;
+import client.entities.OrderKey;
 
 import java.io.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,34 +19,53 @@ public class Storage {
     private String storageFileName;
 
     //TODO in our case we don't care about the order and we'll access the store by key
-    private TreeSet<Client> clients; // todo: можно потом запилить, чтобы клиенты хранились упорядоченно по имени и фамилии
+    private HashSet<Client> clients; // todo: можно потом запилить, чтобы клиенты хранились упорядоченно по имени и фамилии
                                      // todo: реализовать Comparable
     public Storage(String storageFileName) {
-        clients = new TreeSet<Client>();
+        clients = new HashSet<Client>();
         this.storageFileName = Objects.requireNonNull(
-                storageFileName, "storageFileName can't be null");;
+                storageFileName, "storageFileName can't be null");
     }
 
     //FIXME: I bet there might be something more to add
     public synchronized void save() throws StorageException {  // перед началом работы
+        FileOutputStream file = null;
+        ObjectOutputStream out = null;
         try {
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(storageFileName));
+            file = new FileOutputStream(storageFileName);
+            out = new ObjectOutputStream(file);
             out.writeObject(clients);
         } catch (IOException ioex) {
             throw new StorageException(ioex);
+        } finally {
+            try {
+                if (file != null) file.close();
+                if (out != null) out.close();
+            } catch (IOException ex) {
+                throw new StorageException(ex);
+            }
         }
-
     }
 
     public synchronized void restore() throws StorageException { // при завершении работы
+        FileInputStream file = null;
+        ObjectInputStream in = null;
         try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(storageFileName));
-            TreeSet<Client> clients = (TreeSet<Client>) in.readObject();
+            file = new FileInputStream(storageFileName);
+            in = new ObjectInputStream(file);
+            HashSet<Client> clients = (HashSet<Client>) in.readObject();
             this.clients = clients;
         } catch (IOException ioex) {
             throw new StorageException(ioex);
         } catch (ClassNotFoundException cex) {
             throw new StorageException(cex);
+        } finally {
+            try {
+                if (file != null) file.close();
+                if (in != null) in.close();
+            } catch (IOException ex) {
+                throw new StorageException(ex);
+            }
         }
     }
 
@@ -68,7 +88,8 @@ public class Storage {
      * @throws StorageException If the client does not exist, throws the exception.
      */
     public synchronized void addOrders(Client client, Order order) throws StorageException {
-        
+        if (client == null) throw new StorageException();
+        client.getOrders().put(new OrderKey(order.getNum(), order.getDate()), order);
     }
     
     /**
@@ -78,13 +99,15 @@ public class Storage {
      * @throws StorageException If the client does not exist, throws the exception.
      */
     public synchronized void addOrders(Client client, List<Order> orders) throws StorageException {
-        
+        if (client == null) throw new StorageException();
+        for (Order order : orders)
+            client.getOrders().put(new OrderKey(order.getNum(), order.getDate()), order);
     }
 
     //TODO more logically would be to search by ClientKey
     // else you'll pass a client without orders and return the same + orders
     public synchronized Client find() {
-
+        // завтра утром доделаю
         return null;
     }
 

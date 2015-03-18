@@ -52,16 +52,20 @@ public class OrderKey implements Externalizable {
 
     @Override
     public boolean equals(Object anObject) {
-        if (this == anObject) {
+        if (this == anObject)
             return true;
-        }
-        if (anObject instanceof OrderKey) {
-            OrderKey anotherOrderKey = (OrderKey) anObject;
-            if (Objects.equals(this.num, anotherOrderKey.getNum())
-             && Objects.equals(this.date, anotherOrderKey.getDate()))
-                return true;
-        }
+        if (! (anObject instanceof OrderKey))
+            return false;
+        OrderKey anotherOrderKey = (OrderKey) anObject;
+        if (Objects.equals(this.num, anotherOrderKey.getNum())
+         && Objects.equals(this.date, anotherOrderKey.getDate()))
+            return true;
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return (num + date).hashCode();
     }
 
 }
