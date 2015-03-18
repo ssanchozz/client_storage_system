@@ -5,6 +5,10 @@ import client.entities.Order;
 import ext.systems.ExtSystemOneFileAdapter;
 import ext.systems.ExtSystemTwoFilesAdapter;
 
+import java.lang.String;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
 public class StorageTest {
 
     @Test
@@ -41,6 +45,19 @@ public class StorageTest {
         Storage s = new Storage();
         s.restoreDataFromExternalSystem(new ExtSystemOneFileAdapter());
         s.restoreDataFromExternalSystem(new ExtSystemTwoFilesAdapter());
+    }
+
+    @Test
+    public void hackClientOrdersCheck() {
+        Client client1 = new Client("Alexander", "Bogdanov", "123AB");
+        Order order1 = new Order("1", "2015", "order");
+        LinkedHashMap<String, Order> orders = new LinkedHashMap<String, Order>();
+        orders.put("1", order1);
+        client1.setOrders(orders);
+        client1.getOrders().get("1").setNum("2");
+        client1.setName("Aleksandr");
+        System.out.println(client1.getOrders().get("1").getNum());
+        System.out.println(client1.getName());
     }
 
     // Нужно написать тесты для многопоточного чтения/записи

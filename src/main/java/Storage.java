@@ -1,17 +1,12 @@
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import client.entities.Client;
+import client.entities.Order;
+
+import java.io.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import client.entities.Client;
-import client.entities.Order;
-import ext.systems.ExtSystemsReader;
 
 //TODO: ideally it can also implement an interface
 public class Storage {
@@ -32,16 +27,26 @@ public class Storage {
     }
 
     //FIXME: I bet there might be something more to add
-    public synchronized void save() throws IOException {  // перед началом работы
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(storageFileName));
-        out.writeObject(clients);
+    public synchronized void save() throws StorageException {  // перед началом работы
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(storageFileName));
+            out.writeObject(clients);
+        } catch (IOException ioex) {
+            throw new StorageException(ioex);
+        }
+
     }
 
-    //FIXME: and here too. Throws look a bit scary. What about throws StorageException?
-    public synchronized void restore() throws IOException, ClassNotFoundException { // при завершении работы  //todo: добавить свой эксепшн
-        ObjectInputStream in = new ObjectInputStream(new FileInputStream(storageFileName));
-        TreeSet<Client> clients = (TreeSet<Client>)in.readObject();
-        this.clients = clients;
+    public synchronized void restore() throws StorageException { // при завершении работы
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(storageFileName));
+            TreeSet<Client> clients = (TreeSet<Client>) in.readObject();
+            this.clients = clients;
+        } catch (IOException ioex) {
+            throw new StorageException(ioex);
+        } catch (ClassNotFoundException cex) {
+            throw new StorageException(cex);
+        }
     }
 
     /*public synchronized void restoreDataFromExternalSystem(ExtSystemsReader esi) {
@@ -62,7 +67,7 @@ public class Storage {
      * @param order
      * @throws StorageException If the client does not exist, throws the exception.
      */
-    public synchronized void addOrders(Client client, Order order) throws StorageException{
+    public synchronized void addOrders(Client client, Order order) throws StorageException {
         
     }
     
@@ -72,7 +77,7 @@ public class Storage {
      * @param orders
      * @throws StorageException If the client does not exist, throws the exception.
      */
-    public synchronized void addOrders(Client client, List<Order> orders) throws StorageException{
+    public synchronized void addOrders(Client client, List<Order> orders) throws StorageException {
         
     }
 
