@@ -16,6 +16,7 @@ public class ClientKey implements Externalizable {
     }
 
     public ClientKey(String name, String surname, String passport) {
+        // heaven forbid dragging service classes to the client side!
         /*
         Storage.checkClientKeyWithRegExp(Objects.requireNonNull(name),
                                         Objects.requireNonNull(surname),

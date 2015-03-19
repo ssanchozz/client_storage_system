@@ -83,6 +83,7 @@ public class Client implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
+        //also could have been key.writeExternal(), check the internals. very interesting!
         out.writeObject(key);
         out.writeObject(comment);
     }

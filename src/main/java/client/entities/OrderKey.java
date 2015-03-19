@@ -11,7 +11,7 @@ public class OrderKey implements Externalizable {
     private String num;
     private String date;
 
-    public OrderKey() {}
+    protected OrderKey() {}
 
     public OrderKey(String num, String date) {
         this.num = num;
@@ -39,6 +39,7 @@ public class OrderKey implements Externalizable {
         return date;
     }
 
+    //FIXME: fix it
     @Override
     public boolean equals(Object anObject) {
         if (this == anObject)
