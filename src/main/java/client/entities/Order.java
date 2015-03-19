@@ -13,6 +13,10 @@ public class Order implements Serializable {
     private String comment;
 
     public Order() {}
+    
+    //TODO: implement the copy constructor
+    public Order(Order order) {}
+    
 
     // TODO are we allowed to have nulls? Please place your reply in a separate utility class
     public Order(String num, String date, String comment) {

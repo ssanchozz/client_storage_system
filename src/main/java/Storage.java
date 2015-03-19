@@ -18,36 +18,36 @@ public class Storage {
 
     private String storageFileName;
 
-    //TODO in our case we don't care about the order and we'll access the store by key
-    private HashSet<Client> clients; // todo: можно потом запилить, чтобы клиенты хранились упорядоченно по имени и фамилии
-                                     // todo: реализовать Comparable
+    // I'd suggest a map as we have a key and a data object
+    // Map<ClientKey, Client>
+    private HashSet<Client> clients; 
+    
     public Storage(String storageFileName) {
         clients = new HashSet<Client>();
         this.storageFileName = Objects.requireNonNull(
                 storageFileName, "storageFileName can't be null");
     }
 
-    //FIXME: I bet there might be something more to add
-    public synchronized void save() throws StorageException {  // перед началом работы
-        FileOutputStream file = null;
-        ObjectOutputStream out = null;
-        try {
-            file = new FileOutputStream(storageFileName);
-            out = new ObjectOutputStream(file);
+    /**
+     * 
+     * @throws StorageException
+     */
+    public synchronized void save() throws StorageException {
+        try (ObjectOutputStream out = 
+                new ObjectOutputStream(new FileOutputStream(storageFileName))) {
+
             out.writeObject(clients);
         } catch (IOException ioex) {
             throw new StorageException(ioex);
-        } finally {
-            try {
-                if (file != null) file.close();
-                if (out != null) out.close();
-            } catch (IOException ex) {
-                throw new StorageException(ex);
-            }
         }
     }
 
-    public synchronized void restore() throws StorageException { // при завершении работы
+    /**
+     * 
+     * @throws StorageException
+     */
+    //TODO same as save()
+    public synchronized void restore() throws StorageException { 
         FileInputStream file = null;
         ObjectInputStream in = null;
         try {
@@ -69,10 +69,6 @@ public class Storage {
         }
     }
 
-    /*public synchronized void restoreDataFromExternalSystem(ExtSystemsReader esi) {
-        this.clients = esi.readData();
-    }*/
-
     /**
      * Adds a new client together with its orders
      * @param client
@@ -87,8 +83,11 @@ public class Storage {
      * @param order
      * @throws StorageException If the client does not exist, throws the exception.
      */
+    //TODO always use {} even if there's only 1 statement
     public synchronized void addOrders(Client client, Order order) throws StorageException {
-        if (client == null) throw new StorageException();
+        if (client == null) {
+            throw new StorageException();
+        }
         client.getOrders().put(new OrderKey(order.getNum(), order.getDate()), order);
     }
     

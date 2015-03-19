@@ -12,12 +12,13 @@ public class ClientKey implements Externalizable {
     private String surname;
     private String passport;
 
-    public ClientKey() {}
+    protected ClientKey() {
+    }
 
     public ClientKey(String name, String surname, String passport) {
-        this.name = name;
-        this.surname = surname;
-        this.passport = passport;
+        this.name = Objects.requireNonNull(name);
+        this.surname = Objects.requireNonNull(surname);
+        this.passport = Objects.requireNonNull(passport);
     }
 
     @Override
@@ -28,7 +29,8 @@ public class ClientKey implements Externalizable {
     }
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException,
+            ClassNotFoundException {
         name = (String) in.readObject();
         surname = (String) in.readObject();
         passport = (String) in.readObject();
@@ -48,21 +50,24 @@ public class ClientKey implements Externalizable {
 
     @Override
     public boolean equals(Object anObject) {
-        if (this == anObject)
+        if (this == anObject) {
             return true;
-        if (! (anObject instanceof ClientKey))
+        }
+        if (!(anObject instanceof ClientKey)) {
             return false;
+        }
+
         ClientKey anotherClientKey = (ClientKey) anObject;
-        if (Objects.equals(this.name, anotherClientKey.getName())
-         && Objects.equals(this.surname, anotherClientKey.getSurname())
-         && Objects.equals(this.passport, anotherClientKey.getPassport()))
-            return true;
-        return false;
+
+        return Objects.equals(this.name, anotherClientKey.getName())
+                && Objects.equals(this.surname, anotherClientKey.getSurname())
+                && Objects
+                        .equals(this.passport, anotherClientKey.getPassport());
     }
 
     @Override
     public int hashCode() {
-        return (name + surname + passport).hashCode();
+        return Objects.hash(name, surname, passport);
     }
 
 }
