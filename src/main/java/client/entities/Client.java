@@ -83,15 +83,15 @@ public class Client implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        // TODO Auto-generated method stub
-
+        out.writeObject(key);
+        out.writeObject(comment);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException,
             ClassNotFoundException {
-        // TODO Auto-generated method stub
-
+        this.key = (ClientKey) in.readObject();
+        this.comment = (String) in.readObject();
     }
 
 }

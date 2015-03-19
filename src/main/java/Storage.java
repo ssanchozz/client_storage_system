@@ -1,9 +1,9 @@
 import client.entities.Client;
+import client.entities.ClientKey;
 import client.entities.Order;
-import client.entities.OrderKey;
 
 import java.io.*;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -18,12 +18,10 @@ public class Storage {
 
     private String storageFileName;
 
-    // I'd suggest a map as we have a key and a data object
-    // Map<ClientKey, Client>
-    private HashSet<Client> clients; 
+    private HashMap<ClientKey, Client> clients;
     
     public Storage(String storageFileName) {
-        clients = new HashSet<Client>();
+        clients = new HashMap<ClientKey, Client>();
         this.storageFileName = Objects.requireNonNull(
                 storageFileName, "storageFileName can't be null");
     }
@@ -46,26 +44,16 @@ public class Storage {
      * 
      * @throws StorageException
      */
-    //TODO same as save()
-    public synchronized void restore() throws StorageException { 
-        FileInputStream file = null;
-        ObjectInputStream in = null;
-        try {
-            file = new FileInputStream(storageFileName);
-            in = new ObjectInputStream(file);
-            HashSet<Client> clients = (HashSet<Client>) in.readObject();
+    public synchronized void restore() throws StorageException {
+        try (ObjectInputStream in =
+                     new ObjectInputStream(new FileInputStream(storageFileName))) {
+
+            HashMap<ClientKey, Client> clients = (HashMap<ClientKey, Client>) in.readObject();
             this.clients = clients;
         } catch (IOException ioex) {
             throw new StorageException(ioex);
         } catch (ClassNotFoundException cex) {
             throw new StorageException(cex);
-        } finally {
-            try {
-                if (file != null) file.close();
-                if (in != null) in.close();
-            } catch (IOException ex) {
-                throw new StorageException(ex);
-            }
         }
     }
 
@@ -74,7 +62,7 @@ public class Storage {
      * @param client
      */
     public synchronized void add(Client client) {
-        clients.add(client);
+        clients.put(client.getKey(), Objects.requireNonNull(client, "client can't be null"));
     }
     
     /**
@@ -83,12 +71,13 @@ public class Storage {
      * @param order
      * @throws StorageException If the client does not exist, throws the exception.
      */
-    //TODO always use {} even if there's only 1 statement
     public synchronized void addOrders(Client client, Order order) throws StorageException {
         if (client == null) {
             throw new StorageException();
         }
-        client.getOrders().put(new OrderKey(order.getNum(), order.getDate()), order);
+        List<Order> storedOrders = client.getOrders();
+        storedOrders.add(order);
+        client.setOrders(storedOrders);
     }
     
     /**
@@ -98,19 +87,19 @@ public class Storage {
      * @throws StorageException If the client does not exist, throws the exception.
      */
     public synchronized void addOrders(Client client, List<Order> orders) throws StorageException {
-        if (client == null) throw new StorageException();
-        for (Order order : orders)
-            client.getOrders().put(new OrderKey(order.getNum(), order.getDate()), order);
+        if (client == null) {
+            throw new StorageException();
+        }
+        List<Order> storedOrders = client.getOrders();
+        storedOrders.addAll(orders);
+        client.setOrders(storedOrders);
     }
 
-    //TODO more logically would be to search by ClientKey
-    // else you'll pass a client without orders and return the same + orders
-    public synchronized Client find() {
-        // завтра утром доделаю
-        return null;
+    public synchronized Client find(ClientKey key) {
+        return clients.get(Objects.requireNonNull(key));
     }
 
-    private static boolean checkWithRegExp(String name, String surname, String passport) { //todo: завести эксепшн
+    private static boolean checkClientKeyWithRegExp(String name, String surname, String passport) { //todo: завести эксепшн
         Pattern namePattern = Pattern.compile(NAME_PATTERN);
         Pattern SurnamePattern = Pattern.compile(SURNAME_PATTERN);
         Pattern passportPattern = Pattern.compile(PASSPORT_PATTERN);

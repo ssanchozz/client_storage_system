@@ -11,8 +11,6 @@ public class OrderKey implements Externalizable {
     private String num;
     private String date;
 
-    // Alex: Звучит странно, но десериализация работает без сеттеров!!!
-
     public OrderKey() {}
 
     public OrderKey(String num, String date) {
@@ -36,19 +34,10 @@ public class OrderKey implements Externalizable {
     public String getNum() {
         return num;
     }
-    /*
-    public void setNum(String num) {
-        this.num = num;
-    }
-    */
+
     public String getDate() {
         return date;
     }
-    /*
-    public void setDate(String date) {
-        this.date = date;
-    }
-    */
 
     @Override
     public boolean equals(Object anObject) {
@@ -65,7 +54,7 @@ public class OrderKey implements Externalizable {
 
     @Override
     public int hashCode() {
-        return (num + date).hashCode();
+        return Objects.hash(num, date);
     }
 
 }

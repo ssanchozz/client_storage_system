@@ -16,9 +16,14 @@ public class ClientKey implements Externalizable {
     }
 
     public ClientKey(String name, String surname, String passport) {
-        this.name = Objects.requireNonNull(name);
-        this.surname = Objects.requireNonNull(surname);
-        this.passport = Objects.requireNonNull(passport);
+        /*
+        Storage.checkClientKeyWithRegExp(Objects.requireNonNull(name),
+                                        Objects.requireNonNull(surname),
+                                        Objects.requireNonNull(passport));
+        */
+        this.name = name;
+        this.surname = surname;
+        this.passport = passport;
     }
 
     @Override
