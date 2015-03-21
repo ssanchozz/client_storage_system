@@ -1,14 +1,17 @@
 import client.entities.Client;
 import client.entities.ClientKey;
 import client.entities.Order;
+import client.entities.OrderKey;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 //TODO: ideally it can also implement an interface
@@ -63,33 +66,44 @@ public class Storage {
     
     /**
      * Adds an order to an existing client.
-     * @param client
+     * @param key
      * @param order
      */
-    public synchronized void addOrders(Client client, Order order) {
-        Objects.requireNonNull(client);
-        // I get copy of stored orders from client as List
-        List<Order> storedOrders = client.getOrders();
-        // I add new order to List
-        storedOrders.add(order);
-        // Finally I set List with added order to the client
-        // setOrders(List<Order> source) put OrderKey and Order in order's Map
-        client.setOrders(storedOrders);
-        //TODO: where are you adding data???
-        // compare this method and add(Client client)
-        // What are you talking about?
+    public synchronized void addOrders(ClientKey key, Order order) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(order);
+        Client findClient = clients.get(key);
+        if (findClient == null) {
+            Client newClient = new Client(key, "");
+            ArrayList<Order> listOrders = new ArrayList<Order>();
+            listOrders.add(order);
+            newClient.setOrders(listOrders);
+            clients.put(key, newClient);
+        } else {
+            List<Order> listOrders = findClient.getOrders();
+            listOrders.add(order);
+            findClient.setOrders(listOrders);
+        }
     }
     
     /**
      * Adds a list of orders to an existing client.
-     * @param client
+     * @param key
      * @param orders
      */
-    public synchronized void addOrders(Client client, List<Order> orders) {
-        Objects.requireNonNull(client);
-        List<Order> storedOrders = client.getOrders();
-        storedOrders.addAll(orders);
-        client.setOrders(storedOrders); //TODO: Same here
+    public synchronized void addOrders(ClientKey key, List<Order> orders) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(orders);
+        Client findClient = clients.get(key);
+        if (findClient == null) {
+            Client newClient = new Client(key, "");
+            newClient.setOrders(orders);
+            clients.put(key, newClient);
+        } else {
+            List<Order> listOrders = findClient.getOrders();
+            listOrders.addAll(orders);
+            findClient.setOrders(listOrders);
+        }
     }
 
     public synchronized Client find(ClientKey key) {

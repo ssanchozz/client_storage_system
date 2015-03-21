@@ -21,10 +21,10 @@ public class Client implements Externalizable {
     }
 
     public Client(Client client) {
-        this(new ClientKey(new String(client.getKey().getName()),
-                        new String(client.getKey().getSurname()),
-                        new String(client.getKey().getPassport())),
-                new String(client.getComment()));
+        this(new ClientKey(client.getKey().getName(),
+                        client.getKey().getSurname(),
+                        client.getKey().getPassport()),
+                client.getComment());
         setOrders(client.getOrders());
     }
 
@@ -39,7 +39,7 @@ public class Client implements Externalizable {
     }
 
     public List<Order> getOrders() {
-        List<Order> result = new ArrayList<>();
+        List<Order> result = new ArrayList<Order>();
         for (Order o : orders.values()) {
             result.add(new Order(o));
         }
@@ -91,8 +91,7 @@ public class Client implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        //also could have been key.writeExternal(), check the internals. very interesting!
-        out.writeObject(key);
+        key.writeExternal(out);
         out.writeObject(comment);
     }
 

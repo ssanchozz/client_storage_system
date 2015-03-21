@@ -12,14 +12,12 @@ public class Order implements Externalizable {
     private String comment;
 
     protected Order() {}
-    
-    //TODO: implement the copy constructor
+
     public Order(Order order) {
-
+        this(new OrderKey(order.getKey().getNum(),
+                order.getKey().getDate()), order.getComment());
     }
-    
 
-    // TODO are we allowed to have nulls? Please place your reply in a separate utility class
     public Order(OrderKey key, String comment) {
         this.key = Objects.requireNonNull(key);
         this.comment = comment;
