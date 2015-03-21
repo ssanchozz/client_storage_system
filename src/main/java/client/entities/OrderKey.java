@@ -39,18 +39,19 @@ public class OrderKey implements Externalizable {
         return date;
     }
 
-    //FIXME: fix it
     @Override
     public boolean equals(Object anObject) {
-        if (this == anObject)
+        if (this == anObject) {
             return true;
-        if (! (anObject instanceof OrderKey))
+        }
+        if (! (anObject instanceof OrderKey)) {
             return false;
+        }
+
         OrderKey anotherOrderKey = (OrderKey) anObject;
-        if (Objects.equals(this.num, anotherOrderKey.getNum())
-         && Objects.equals(this.date, anotherOrderKey.getDate()))
-            return true;
-        return false;
+
+        return Objects.equals(this.num, anotherOrderKey.getNum())
+                && Objects.equals(this.date, anotherOrderKey.getDate());
     }
 
     @Override

@@ -20,6 +20,14 @@ public class Client implements Externalizable {
     protected Client() {
     }
 
+    public Client(Client client) {
+        this(new ClientKey(new String(client.getKey().getName()),
+                        new String(client.getKey().getSurname()),
+                        new String(client.getKey().getPassport())),
+                new String(client.getComment()));
+        setOrders(client.getOrders());
+    }
+
     public Client(ClientKey key, String comment) {
         this(key, comment, new HashMap<OrderKey, Order>());
     }

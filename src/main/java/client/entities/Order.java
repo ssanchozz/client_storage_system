@@ -1,6 +1,9 @@
 package client.entities;
 
-import java.io.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Objects;
 
 public class Order implements Externalizable {
@@ -11,7 +14,9 @@ public class Order implements Externalizable {
     protected Order() {}
     
     //TODO: implement the copy constructor
-    public Order(Order order) {}
+    public Order(Order order) {
+
+    }
     
 
     // TODO are we allowed to have nulls? Please place your reply in a separate utility class
@@ -24,9 +29,8 @@ public class Order implements Externalizable {
         return comment;
     }
 
-    //TODO: comment may be null, also in a constructor nulls are allowed!
     public void setComment(String comment) {
-        this.comment = Objects.requireNonNull(comment);
+        this.comment = comment;
     }
 
     public OrderKey getKey() {

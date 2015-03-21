@@ -16,12 +16,15 @@ public class ClientKey implements Externalizable {
     }
 
     public ClientKey(String name, String surname, String passport) {
-        // heaven forbid dragging service classes to the client side!
-        /*
-        Storage.checkClientKeyWithRegExp(Objects.requireNonNull(name),
-                                        Objects.requireNonNull(surname),
-                                        Objects.requireNonNull(passport));
-        */
+        if (!EntitiesUtils.checkNameWithRegExp(Objects.requireNonNull(name))) {
+            throw new IllegalArgumentException("Wrong name format!");
+        }
+        if (!EntitiesUtils.checkNameWithRegExp(Objects.requireNonNull(surname))) {
+            throw new IllegalArgumentException("Wrong surname format!");
+        }
+        if (!EntitiesUtils.checkNameWithRegExp(Objects.requireNonNull(passport))) {
+            throw new IllegalArgumentException("Wrong passport format!");
+        }
         this.name = name;
         this.surname = surname;
         this.passport = passport;
