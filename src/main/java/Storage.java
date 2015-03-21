@@ -48,13 +48,10 @@ public class Storage {
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(storageFileName))) {
 
-            HashMap<ClientKey, Client> clients = (HashMap<ClientKey, Client>) in.readObject();
-            this.clients = clients;
-        } catch (IOException ioex) {
+            this.clients = (HashMap<ClientKey, Client>) in.readObject();;
+        } catch (IOException|ClassNotFoundException ioex) {
             throw new StorageException(ioex);
-        } catch (ClassNotFoundException cex) {
-            throw new StorageException(cex);
-        }
+        } 
     }
 
     /**
@@ -62,6 +59,7 @@ public class Storage {
      * @param client
      */
     public synchronized void add(Client client) {
+        //FIXME: NPE!!!
         clients.put(client.getKey(), Objects.requireNonNull(client, "client can't be null"));
     }
     
@@ -73,11 +71,14 @@ public class Storage {
      */
     public synchronized void addOrders(Client client, Order order) throws StorageException {
         if (client == null) {
+            //TODO: add the reason for the exception,e.g. 'client is null'
+            // also for such cases NPE is usually throws, also Objects.requireNotNull()
             throw new StorageException();
         }
         List<Order> storedOrders = client.getOrders();
         storedOrders.add(order);
-        client.setOrders(storedOrders);
+        client.setOrders(storedOrders); //TODO: where are you adding data??? 
+        // compare this method and add(Client client)
     }
     
     /**
@@ -92,13 +93,16 @@ public class Storage {
         }
         List<Order> storedOrders = client.getOrders();
         storedOrders.addAll(orders);
-        client.setOrders(storedOrders);
+        client.setOrders(storedOrders); //TODO: Same here
     }
 
     public synchronized Client find(ClientKey key) {
+        //FIXME: this can indirectly modify clients, is that ok?
         return clients.get(Objects.requireNonNull(key));
     }
 
+    //FIXME: move to a separate class and split in methods
+    // ideally I'd like to check one field at a time
     private static boolean checkClientKeyWithRegExp(String name, String surname, String passport) { //todo: завести эксепшн
         Pattern namePattern = Pattern.compile(NAME_PATTERN);
         Pattern SurnamePattern = Pattern.compile(SURNAME_PATTERN);

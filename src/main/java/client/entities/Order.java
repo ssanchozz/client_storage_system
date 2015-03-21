@@ -3,15 +3,12 @@ package client.entities;
 import java.io.*;
 import java.util.Objects;
 
-//TODO: we need serialization to be fast, may be choose another interface?
-// nothing wrong here but it won't suit for fast processing.
-// make sure you have no warnings here
 public class Order implements Externalizable {
 
     private OrderKey key;
     private String comment;
 
-    public Order() {}
+    protected Order() {}
     
     //TODO: implement the copy constructor
     public Order(Order order) {}
@@ -27,6 +24,7 @@ public class Order implements Externalizable {
         return comment;
     }
 
+    //TODO: comment may be null, also in a constructor nulls are allowed!
     public void setComment(String comment) {
         this.comment = Objects.requireNonNull(comment);
     }
