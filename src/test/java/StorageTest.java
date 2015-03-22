@@ -1,18 +1,11 @@
 import client.entities.ClientKey;
-import org.junit.Test;
+//import org.junit.Test;
 
 import client.entities.Client;
-import client.entities.Order;
-import ext.systems.ExtSystemOneFileAdapter;
-import ext.systems.ExtSystemTwoFilesAdapter;
-
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 public class StorageTest {
 
-    @Test
+//    @Test
     public void patternsCheck() {
         ClientKey ck1 = new ClientKey("Alexander", "Bogdanov", "123AB");
         Client client1 = new Client(ck1, "client1");

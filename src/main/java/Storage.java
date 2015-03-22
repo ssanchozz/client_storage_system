@@ -1,8 +1,12 @@
 import client.entities.Client;
 import client.entities.ClientKey;
 import client.entities.Order;
-import client.entities.OrderKey;
+import ext.systems.OneFileParserCreator;
+import ext.systems.Parser;
+import ext.systems.ParserCreator;
+import ext.systems.TwoFilesParserCreator;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +20,8 @@ import java.util.Objects;
 
 //TODO: ideally it can also implement an interface
 public class Storage {
+
+    public static final int FIRST_EXT_SYSTEM_TYPE = 1;
 
     private String storageFileName;
 
@@ -108,6 +114,24 @@ public class Storage {
 
     public synchronized Client find(ClientKey key) {
         return new Client(clients.get(Objects.requireNonNull(key)));
+    }
+
+    public synchronized void readExtSystemData(String filePath) {
+        File file = new File(filePath);
+        Parser parser;
+        ParserCreator creator;
+        String fileName = file.getName();
+        if (fileName.contains(".type1")) {
+            creator = new OneFileParserCreator();
+            parser = creator.factoryMethod(file);
+        }
+        if (fileName.contains(".type2")) {
+            creator = new TwoFilesParserCreator();
+            parser = creator.factoryMethod(file);
+        }
+
+        // HashMap<ClientKey, Client> extData = parser.getDataFromExtSystem();
+
     }
 
 }
