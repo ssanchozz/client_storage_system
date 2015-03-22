@@ -19,9 +19,9 @@ import ext.systems.Parser;
 import ext.systems.ParserCreator;
 import ext.systems.TwoFilesParserCreator;
 
-//TODO: ideally it can also implement an interface
 public class Storage implements Store{
 
+    //???
     public static final int FIRST_EXT_SYSTEM_TYPE = 1;
 
     private String storageFileName;
@@ -136,6 +136,9 @@ public class Storage implements Store{
         Parser parser;
         ParserCreator creator;
         String fileName = file.getName();
+        
+        // sounds a bit frightening, check the unit tests
+        // what if I'd like to use the same but in another place?
         if (fileName.contains(".type1")) {
             creator = new OneFileParserCreator();
             parser = creator.factoryMethod(file);
@@ -144,6 +147,8 @@ public class Storage implements Store{
             creator = new TwoFilesParserCreator();
             parser = creator.factoryMethod(file);
         }
+        
+        // I would create 1 interface, 2 parsers and 1 factory.
 
         // HashMap<ClientKey, Client> extData = parser.getDataFromExtSystem();
 
