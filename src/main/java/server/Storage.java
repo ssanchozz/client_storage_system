@@ -1,16 +1,4 @@
 package server;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-
 import client.entities.Client;
 import client.entities.ClientKey;
 import client.entities.Order;
@@ -19,10 +7,10 @@ import ext.systems.Parser;
 import ext.systems.ParserCreator;
 import ext.systems.TwoFilesParserCreator;
 
-public class Storage implements Store{
+import java.io.*;
+import java.util.*;
 
-    //???
-    public static final int FIRST_EXT_SYSTEM_TYPE = 1;
+public class Storage implements Store {
 
     private String storageFileName;
 
@@ -69,7 +57,12 @@ public class Storage implements Store{
     @Override
     public synchronized void add(Client client) {
         Objects.requireNonNull(client, "client can't be null");
-        clients.put(client.getKey(), client);
+        Client findClient = find(client.getKey());
+        if (findClient == null) {
+            clients.put(client.getKey(), client);
+        } else {
+            addOrders(client.getKey(), client.getOrders());
+        }
     }
     
     /**
@@ -82,20 +75,16 @@ public class Storage implements Store{
         Objects.requireNonNull(key);
         Objects.requireNonNull(order);
         Client findClient = clients.get(key);
-        
-        //TODO: how would you think, may we make use of a single listOrder.add()?
-        // if you notice, there are some lines duplicated and they have the same logic.
+        List<Order> listOrders;
         if (findClient == null) {
-            Client newClient = new Client(key, "");
-            ArrayList<Order> listOrders = new ArrayList<Order>();
-            listOrders.add(order);
-            newClient.setOrders(listOrders);
-            clients.put(key, newClient);
+            findClient = new Client(key, "");
+            listOrders = new ArrayList<Order>();
+            clients.put(key, findClient);
         } else {
-            List<Order> listOrders = findClient.getOrders();
-            listOrders.add(order);
-            findClient.setOrders(listOrders);
+            listOrders = findClient.getOrders();
         }
+        listOrders.add(order);
+        findClient.setOrders(listOrders);
     }
     
     /**
@@ -107,22 +96,21 @@ public class Storage implements Store{
         Objects.requireNonNull(key);
         Objects.requireNonNull(orders);
         Client findClient = clients.get(key);
-        
-        // TODO: same as above
         if (findClient == null) {
-            Client newClient = new Client(key, "");
-            newClient.setOrders(orders);
-            clients.put(key, newClient);
+            findClient = new Client(key, "");
+            clients.put(key, findClient);
         } else {
-            List<Order> listOrders = findClient.getOrders();
-            listOrders.addAll(orders);
-            findClient.setOrders(listOrders);
+            orders.addAll(findClient.getOrders());
+            clients.put(key, findClient);
         }
+        findClient.setOrders(orders);
+        System.out.println();
     }
 
     @Override
     public synchronized Client find(ClientKey key) {
-        return new Client(clients.get(Objects.requireNonNull(key)));
+        Client findClient = clients.get(Objects.requireNonNull(key));
+        return findClient == null ? null : new Client(findClient);
     }
     
     @Override

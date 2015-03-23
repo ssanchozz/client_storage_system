@@ -1,34 +1,39 @@
 package server;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import client.entities.Client;
 import client.entities.ClientKey;
 import client.entities.Order;
 import client.entities.OrderKey;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class StorageTest {
 
     private Storage storage;
     
     @Before
-    public void setup(){
+    public void setup() {
         storage = new Storage("");
     }
     
     @Test
     //TODO: here comes the oops!
-    public void testFind(){
-        storage.find(new ClientKey("q", "q", "10QW4"));
+    public void testFind() {
+        ClientKey findClientKey = new ClientKey("q", "q", "10QW4");
+        storage.find(findClientKey);
+        storage.add(new Client(new ClientKey("w", "w", "111WQ"), ""));
+        storage.find(findClientKey);
     }
     
     @Test
     //TODO: what the heck is that? Oops #2
-    public void testAdd(){
+    public void testAdd() {
         // added a client
         ClientKey key = new ClientKey("q", "q", "10QW4");
         Map<OrderKey, Order> orders = new HashMap<>();
@@ -43,29 +48,31 @@ public class StorageTest {
         Assert.assertNotNull(retrievedClient);
         Assert.assertEquals(client, retrievedClient);
         Assert.assertEquals(client.getOrders(), retrievedClient.getOrders());
-        
+
         // now, 1000 lines later, data read from a file
         ClientKey key1 = new ClientKey("q", "q", "10QW4");
         Map<OrderKey, Order> orders1 = new HashMap<>();
         OrderKey orderKey1 = new OrderKey("53", "2014-05-06");
-        Order order1  = new Order(orderKey, "even more important order");
+        Order order1  = new Order(orderKey1, "even more important order");
         orders1.put(orderKey1, order1);
         Client client1 = new Client(key1, "", orders1);
         
-     // saved the client
+        // saved the client
         storage.add(client1);
         Client retrievedClient1 = storage.find(key);
         Assert.assertNotNull(retrievedClient1);
         //it must be the same client
         Assert.assertEquals(client, retrievedClient1);
-        
-        Map<OrderKey, Order> expectedOrders = new HashMap<>();
-        expectedOrders.put(orderKey, order);
-        expectedOrders.put(orderKey1, order1);
-        
+
+        List<Order> expectedOrders = new ArrayList<Order>();
+        expectedOrders.add(order);
+        expectedOrders.add(order1);
+
+        System.out.println(retrievedClient1.getOrders());
+
         // we now see 2 orders
-        Assert.assertEquals(expectedOrders, retrievedClient.getOrders());
-        
+        Assert.assertEquals(expectedOrders, retrievedClient1.getOrders());
+
     }
     
     public void patternsCheck() {
