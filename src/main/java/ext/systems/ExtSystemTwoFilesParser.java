@@ -18,6 +18,10 @@ public class ExtSystemTwoFilesParser extends Parser {
     void setFile(File file) {
         Objects.requireNonNull(file);
         String path = file.getPath();
+        
+        // TODO: I would use just 1 hash map. this implementation
+        // is a bit frightening and won't work with multiple threads.
+        
         if (CLIENT_FILE_NAME.equals(file.getName())) {
             path = path.substring(0, path.length() - CLIENT_FILE_NAME.length());
             fileToParseClient = file;

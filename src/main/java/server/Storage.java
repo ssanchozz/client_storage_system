@@ -1,11 +1,4 @@
-import client.entities.Client;
-import client.entities.ClientKey;
-import client.entities.Order;
-import ext.systems.OneFileParserCreator;
-import ext.systems.Parser;
-import ext.systems.ParserCreator;
-import ext.systems.TwoFilesParserCreator;
-
+package server;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,13 +7,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-//TODO: ideally it can also implement an interface
-public class Storage {
+import client.entities.Client;
+import client.entities.ClientKey;
+import client.entities.Order;
+import ext.systems.OneFileParserCreator;
+import ext.systems.Parser;
+import ext.systems.ParserCreator;
+import ext.systems.TwoFilesParserCreator;
 
+public class Storage implements Store{
+
+    //???
     public static final int FIRST_EXT_SYSTEM_TYPE = 1;
 
     private String storageFileName;
@@ -65,6 +66,7 @@ public class Storage {
      * Adds a new client together with its orders
      * @param client
      */
+    @Override
     public synchronized void add(Client client) {
         Objects.requireNonNull(client, "client can't be null");
         clients.put(client.getKey(), client);
@@ -75,10 +77,14 @@ public class Storage {
      * @param key
      * @param order
      */
+    @Override
     public synchronized void addOrders(ClientKey key, Order order) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(order);
         Client findClient = clients.get(key);
+        
+        //TODO: how would you think, may we make use of a single listOrder.add()?
+        // if you notice, there are some lines duplicated and they have the same logic.
         if (findClient == null) {
             Client newClient = new Client(key, "");
             ArrayList<Order> listOrders = new ArrayList<Order>();
@@ -101,6 +107,8 @@ public class Storage {
         Objects.requireNonNull(key);
         Objects.requireNonNull(orders);
         Client findClient = clients.get(key);
+        
+        // TODO: same as above
         if (findClient == null) {
             Client newClient = new Client(key, "");
             newClient.setOrders(orders);
@@ -112,8 +120,15 @@ public class Storage {
         }
     }
 
+    @Override
     public synchronized Client find(ClientKey key) {
         return new Client(clients.get(Objects.requireNonNull(key)));
+    }
+    
+    @Override
+    public Iterator<Client> iterator() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public synchronized void readExtSystemData(String filePath) {
@@ -121,6 +136,9 @@ public class Storage {
         Parser parser;
         ParserCreator creator;
         String fileName = file.getName();
+        
+        // sounds a bit frightening, check the unit tests
+        // what if I'd like to use the same but in another place?
         if (fileName.contains(".type1")) {
             creator = new OneFileParserCreator();
             parser = creator.factoryMethod(file);
@@ -129,6 +147,8 @@ public class Storage {
             creator = new TwoFilesParserCreator();
             parser = creator.factoryMethod(file);
         }
+        
+        // I would create 1 interface, 2 parsers and 1 factory.
 
         // HashMap<ClientKey, Client> extData = parser.getDataFromExtSystem();
 
