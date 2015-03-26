@@ -2,10 +2,7 @@ package server;
 import client.entities.Client;
 import client.entities.ClientKey;
 import client.entities.Order;
-import ext.systems.OneFileParserCreator;
 import ext.systems.Parser;
-import ext.systems.ParserCreator;
-import ext.systems.TwoFilesParserCreator;
 
 import java.io.*;
 import java.util.*;
@@ -120,21 +117,10 @@ public class Storage implements Store {
     }
 
     public synchronized void readExtSystemData(String filePath) {
-        File file = new File(filePath);
-        Parser parser;
-        ParserCreator creator;
-        String fileName = file.getName();
-        
-        // sounds a bit frightening, check the unit tests
-        // what if I'd like to use the same but in another place?
-        if (fileName.contains(".type1")) {
-            creator = new OneFileParserCreator();
-            parser = creator.factoryMethod(file);
-        }
-        if (fileName.contains(".type2")) {
-            creator = new TwoFilesParserCreator();
-            parser = creator.factoryMethod(file);
-        }
+        ext.systems.ParserFactory parserFactory = new ext.systems.ParserFactory();
+        Parser parser = parserFactory.createParser(filePath);
+
+
         
         // I would create 1 interface, 2 parsers and 1 factory.
 

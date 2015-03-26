@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.Objects;
 import java.util.TreeSet;
 
-public class ExtSystemTwoFilesParser extends Parser {
+public class ExtSystemTwoFilesParser implements Parser {
 
     public static final String CLIENT_FILE_NAME = "client.type2";
     public static final String ORDER_FILE_NAME = "order.type2";
@@ -15,7 +15,7 @@ public class ExtSystemTwoFilesParser extends Parser {
     File fileToParseOrder;
 
     @Override
-    void setFile(File file) {
+    public void setFile(File file) {
         Objects.requireNonNull(file);
         String path = file.getPath();
         

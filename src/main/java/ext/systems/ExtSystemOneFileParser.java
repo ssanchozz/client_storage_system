@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
 
-public class ExtSystemOneFileParser extends Parser {
+public class ExtSystemOneFileParser implements Parser {
 
     private File fileToParse;
     /*
@@ -32,7 +32,7 @@ public class ExtSystemOneFileParser extends Parser {
     }   */
 
     @Override
-    void setFile(File file) {
+    public void setFile(File file) {
         fileToParse = Objects.requireNonNull(file);
     }
 
