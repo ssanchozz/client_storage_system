@@ -21,10 +21,16 @@ public class Client implements Externalizable {
     }
 
     public Client(Client client) {
+        // FIXME: is the key mutable?
+        // how about making use of Client(ClientKey key, String comment, Map<OrderKey, Order> orders)
         this(new ClientKey(client.getKey().getName(),
                         client.getKey().getSurname(),
                         client.getKey().getPassport()),
                 client.getComment());
+        
+        // FIXME: NEVER EVER ALLOW THE EXECUTION FLOW TO LEAVE THE CONSTRUCTOR. DANGEROUS!!!
+        // check the unit tests.
+        // this is dangerous as somebody may override you, and you will fall apart!
         setOrders(client.getOrders());
     }
 

@@ -4,6 +4,7 @@ import client.entities.Client;
 import client.entities.ClientKey;
 import client.entities.Order;
 import client.entities.OrderKey;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -109,6 +110,38 @@ public class StorageTest {
         Client client6 = new Client("Alexander", "Bogdanovvvvvvvvvvvvvv", "123AB");
         Client client7 = new Client("Alexander", "", "123AB");
         */
+    }
+    
+    @Test
+    public void fuckoffClient(){
+        ClientKey clientKey = new ClientKey("AAAAA", "AAAAA", "AAAAA");
+        new ReadOnlyClient(new ReadOnlyClient(clientKey, null)); // fuck off
+    }
+    
+    private class ReadOnlyClient extends Client {
+        
+        public ReadOnlyClient(Client client) {
+            super(client);
+        }
+        
+        public ReadOnlyClient(ClientKey clientKey, String comment) {
+            super(clientKey, comment);
+        }
+        
+        @Override
+        public void setOrders(List<Order> source) {
+            throw new UnsupportedOperationException(); 
+        }
+        
+        @Override
+        public void setKey(ClientKey key) {
+            throw new UnsupportedOperationException(); 
+        }
+        
+        @Override
+        public void setComment(String comment) {
+            throw new UnsupportedOperationException(); 
+        }
     }
 
 /*
