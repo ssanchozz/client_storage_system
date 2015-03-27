@@ -1,8 +1,10 @@
 package server;
+
 import client.entities.Client;
 import client.entities.ClientKey;
 import client.entities.Order;
 import ext.systems.Parser;
+import ext.systems.ParserFactory;
 
 import java.io.*;
 import java.util.*;
@@ -133,8 +135,7 @@ public class Storage implements Store {
     }
 
     public synchronized void readExtSystemData(String filePath) {
-        ext.systems.ParserFactory parserFactory = new ext.systems.ParserFactory();
-        Parser parser = parserFactory.createParser(filePath);
+        Parser parser = ParserFactory.createParser(filePath);
 
 
         

@@ -4,7 +4,7 @@ import java.io.File;
 
 public class ParserFactory {
 
-    public Parser createParser(String filePath) {
+    public static Parser createParser(String filePath) {
         File file = new File(filePath);
         String fileName = file.getName();
         if (fileName.contains(".type1")) {
