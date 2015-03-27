@@ -112,8 +112,24 @@ public class Storage implements Store {
     
     @Override
     public Iterator<Client> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        final Collection<Client> clients = this.clients.values();
+        final Iterator<Client> it = clients.iterator();
+        return new Iterator<Client>() {
+            @Override
+            public boolean hasNext() {
+                return it.hasNext();
+            }
+
+            @Override
+            public Client next() {
+                return it.next();
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
     public synchronized void readExtSystemData(String filePath) {

@@ -8,10 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StorageTest {
 
@@ -73,6 +70,27 @@ public class StorageTest {
         // we now see 2 orders
         Assert.assertEquals(expectedOrders, retrievedClient1.getOrders());
 
+    }
+
+    @Test
+    public void testStorageIterator() {
+        ClientKey ck1 = new ClientKey("Alexander", "Bogdanov", "123AB");
+        Client client1 = new Client(ck1, "client1");
+
+        ClientKey ck2 = new ClientKey("Vsevolod", "Sayapin", "456VS");
+        Client client2 = new Client(ck2, "client2");
+
+        ClientKey ck3 = new ClientKey("Anton", "Pushkarev", "789AP");
+        Client client3 = new Client(ck3, "client3");
+
+        storage.add(client1);
+        storage.add(client2);
+        storage.add(client3);
+
+        Iterator<Client> it = storage.iterator();
+        while (it.hasNext()) {
+            Assert.assertNotNull(it.next());
+        }
     }
     
     public void patternsCheck() {
