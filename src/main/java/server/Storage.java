@@ -55,6 +55,9 @@ public class Storage implements Store {
      */
     @Override
     public synchronized void add(Client client) {
+        //TODO: please specify behaviour of the method. The implementation can be done in 2 
+        // different ways. what if the client already exists? what is the behaviour?
+        // this needs to be documented
         Objects.requireNonNull(client, "client can't be null");
         Client findClient = find(client.getKey());
         if (findClient == null) {
@@ -76,6 +79,7 @@ public class Storage implements Store {
         Client findClient = clients.get(key);
         List<Order> listOrders;
         if (findClient == null) {
+            //FIXME: javadoc says about an existing client...
             findClient = new Client(key, "");
             listOrders = new ArrayList<Order>();
             clients.put(key, findClient);
@@ -96,6 +100,7 @@ public class Storage implements Store {
         Objects.requireNonNull(orders);
         Client findClient = clients.get(key);
         if (findClient == null) {
+            //TODO same as above. I don't mind but the behaviour must be documented
             findClient = new Client(key, "");
             clients.put(key, findClient);
         } else {
@@ -114,6 +119,7 @@ public class Storage implements Store {
     
     @Override
     public Iterator<Client> iterator() {
+        //FIXME: Wonderful. How about unmodifiable collections?
         final Collection<Client> clients = this.clients.values();
         final Iterator<Client> it = clients.iterator();
         return new Iterator<Client>() {
@@ -136,7 +142,9 @@ public class Storage implements Store {
 
     public synchronized void readExtSystemData(String filePath) {
         Parser parser = ParserFactory.createParser(filePath);
-
+        //TODO: if you continue, we would have no options but to load whatever they sent us
+        // may be the storage and the loader will be separate? There's no strict requirements
+        // just would like to understand the behaviour.
 
         
         // I would create 1 interface, 2 parsers and 1 factory.

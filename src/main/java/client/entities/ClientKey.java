@@ -16,6 +16,7 @@ public class ClientKey implements Externalizable {
     }
 
     public ClientKey(String name, String surname, String passport) {
+        // all strings are private static final
         if (!EntitiesUtils.checkStringWithRegExp(name, EntitiesUtils.NAME_PATTERN)) {
             throw new IllegalArgumentException("Wrong name format!");
         }

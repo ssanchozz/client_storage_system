@@ -6,7 +6,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Objects;
 
-//TODO: create an immutable serializable key 
 public class OrderKey implements Externalizable {
     private String num;
     private String date;
