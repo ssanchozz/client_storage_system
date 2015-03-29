@@ -14,9 +14,7 @@ public class Order implements Externalizable {
     protected Order() {}
 
     public Order(Order order) {
-        //FIXME: the key is immutable
-        this(new OrderKey(order.getKey().getNum(),
-                order.getKey().getDate()), order.getComment());
+        this(order.getKey(), order.getComment());
     }
 
     public Order(OrderKey key, String comment) {

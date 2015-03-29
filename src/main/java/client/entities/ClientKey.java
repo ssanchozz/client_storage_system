@@ -17,13 +17,13 @@ public class ClientKey implements Externalizable {
 
     public ClientKey(String name, String surname, String passport) {
         // all strings are private static final
-        if (!EntitiesUtils.checkStringWithRegExp(name, EntitiesUtils.NAME_PATTERN)) {
+        if (!EntitiesUtils.checkStringWithRegExp(name, EntitiesUtils.CLIENT_NAME_PATTERN)) {
             throw new IllegalArgumentException("Wrong name format!");
         }
-        if (!EntitiesUtils.checkStringWithRegExp(surname, EntitiesUtils.SURNAME_PATTERN)) {
+        if (!EntitiesUtils.checkStringWithRegExp(surname, EntitiesUtils.CLIENT_SURNAME_PATTERN)) {
             throw new IllegalArgumentException("Wrong surname format!");
         }
-        if (!EntitiesUtils.checkStringWithRegExp(passport, EntitiesUtils.PASSPORT_PATTERN)) {
+        if (!EntitiesUtils.checkStringWithRegExp(passport, EntitiesUtils.CLIENT_PASSPORT_PATTERN)) {
             throw new IllegalArgumentException("Wrong passport format!");
         }
         this.name = name;

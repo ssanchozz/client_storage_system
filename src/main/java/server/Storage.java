@@ -50,14 +50,13 @@ public class Storage implements Store {
     }
 
     /**
-     * Adds a new client together with its orders
+     * Adds a new client together with its orders.
+     * If client already is in the storage, adds
+     * orders to an existing client.
      * @param client
      */
     @Override
     public synchronized void add(Client client) {
-        //TODO: please specify behaviour of the method. The implementation can be done in 2 
-        // different ways. what if the client already exists? what is the behaviour?
-        // this needs to be documented
         Objects.requireNonNull(client, "client can't be null");
         Client findClient = find(client.getKey());
         if (findClient == null) {
@@ -69,6 +68,8 @@ public class Storage implements Store {
     
     /**
      * Adds an order to an existing client.
+     * If the client with the key doesn't exist, creates
+     * a new one with the order.
      * @param key
      * @param order
      */
@@ -79,7 +80,6 @@ public class Storage implements Store {
         Client findClient = clients.get(key);
         List<Order> listOrders;
         if (findClient == null) {
-            //FIXME: javadoc says about an existing client...
             findClient = new Client(key, "");
             listOrders = new ArrayList<Order>();
             clients.put(key, findClient);
@@ -92,6 +92,8 @@ public class Storage implements Store {
     
     /**
      * Adds a list of orders to an existing client.
+     * If the client with the key doesn't exist, creates
+     * a new one with the orders.
      * @param key
      * @param orders
      */
@@ -100,7 +102,6 @@ public class Storage implements Store {
         Objects.requireNonNull(orders);
         Client findClient = clients.get(key);
         if (findClient == null) {
-            //TODO same as above. I don't mind but the behaviour must be documented
             findClient = new Client(key, "");
             clients.put(key, findClient);
         } else {
@@ -119,8 +120,9 @@ public class Storage implements Store {
     
     @Override
     public Iterator<Client> iterator() {
-        //FIXME: Wonderful. How about unmodifiable collections?
-        final Collection<Client> clients = this.clients.values();
+        //TODO: Please, would you specify a test that breaks my iterator?
+        final Collection<Client> clients =
+                Collections.unmodifiableCollection(this.clients.values());
         final Iterator<Client> it = clients.iterator();
         return new Iterator<Client>() {
             @Override
@@ -140,14 +142,17 @@ public class Storage implements Store {
         };
     }
 
+    /**
+     * Reads data from external file, specified by filePath into storage.
+     * If external system has two files, you should specify any one.
+     * @param filePath
+     */
     public synchronized void readExtSystemData(String filePath) {
         Parser parser = ParserFactory.createParser(filePath);
         //TODO: if you continue, we would have no options but to load whatever they sent us
         // may be the storage and the loader will be separate? There's no strict requirements
         // just would like to understand the behaviour.
 
-        
-        // I would create 1 interface, 2 parsers and 1 factory.
 
         // HashMap<ClientKey, Client> extData = parser.getDataFromExtSystem();
 

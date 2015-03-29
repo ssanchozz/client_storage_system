@@ -1,8 +1,10 @@
 package ext.systems;
 
 import client.entities.Client;
+import client.entities.ClientKey;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 
@@ -31,6 +33,16 @@ public class ExtSystemTwoFilesParser implements Parser {
             fileToParseOrder = file;
             fileToParseOrder = new File(path + CLIENT_FILE_NAME);
         }
+    }
+
+    @Override
+    public Map<ClientKey, Client> processFile() {
+        return null;
+    }
+
+    @Override
+    public Client parse(String line) {
+        return null;
     }
 
 }
