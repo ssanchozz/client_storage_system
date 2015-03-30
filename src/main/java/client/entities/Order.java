@@ -40,13 +40,14 @@ public class Order implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(key);
+        key.writeExternal(out);
         out.writeObject(comment);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        this.key = (OrderKey) in.readObject();
+        key = new OrderKey();
+        key.readExternal(in);
         this.comment = (String) in.readObject();
     }
 

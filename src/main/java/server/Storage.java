@@ -3,6 +3,7 @@ package server;
 import client.entities.Client;
 import client.entities.ClientKey;
 import client.entities.Order;
+import client.entities.OrderKey;
 import ext.systems.Parser;
 import ext.systems.ParserFactory;
 
@@ -14,7 +15,7 @@ public class Storage implements Store {
     private String storageFileName;
 
     private HashMap<ClientKey, Client> clients;
-    
+
     public Storage(String storageFileName) {
         clients = new HashMap<ClientKey, Client>();
         this.storageFileName = Objects.requireNonNull(
@@ -41,12 +42,13 @@ public class Storage implements Store {
      */
     public synchronized void restore() throws StorageException {
         try (ObjectInputStream in =
-                     new ObjectInputStream(new FileInputStream(storageFileName))) {
+                new ObjectInputStream(new FileInputStream(storageFileName))) {
 
-            this.clients = (HashMap<ClientKey, Client>) in.readObject();;
-        } catch (IOException|ClassNotFoundException ioex) {
+            this.clients = (HashMap<ClientKey, Client>) in.readObject();
+            ;
+        } catch (IOException | ClassNotFoundException ioex) {
             throw new StorageException(ioex);
-        } 
+        }
     }
 
     /**
@@ -60,12 +62,12 @@ public class Storage implements Store {
         Objects.requireNonNull(client, "client can't be null");
         Client findClient = find(client.getKey());
         if (findClient == null) {
-            clients.put(client.getKey(), client);
+            clients.put(client.getKey(), new Client(client));
         } else {
-            addOrders(client.getKey(), client.getOrders());
+            addOrders(client.getKey(), client.getOrders().values());
         }
     }
-    
+
     /**
      * Adds an order to an existing client.
      * If the client with the key doesn't exist, creates
@@ -75,21 +77,11 @@ public class Storage implements Store {
      */
     @Override
     public synchronized void addOrders(ClientKey key, Order order) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(order);
-        Client findClient = clients.get(key);
-        List<Order> listOrders;
-        if (findClient == null) {
-            findClient = new Client(key, "");
-            listOrders = new ArrayList<Order>();
-            clients.put(key, findClient);
-        } else {
-            listOrders = findClient.getOrders();
-        }
-        listOrders.add(order);
-        findClient.setOrders(listOrders);
+        List<Order> list = new ArrayList<>();
+        list.add(order);
+        addOrders(key, list);
     }
-    
+
     /**
      * Adds a list of orders to an existing client.
      * If the client with the key doesn't exist, creates
@@ -97,19 +89,29 @@ public class Storage implements Store {
      * @param key
      * @param orders
      */
-    public synchronized void addOrders(ClientKey key, List<Order> orders) {
+    @Override
+    public synchronized void addOrders(ClientKey key, Collection<Order> orders) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(orders);
-        Client findClient = clients.get(key);
+
+        Client findClient = find(key);
+        Map<OrderKey, Order> ordersMap = new HashMap<>();
+
         if (findClient == null) {
+            // create a new client
             findClient = new Client(key, "");
-            clients.put(key, findClient);
         } else {
-            orders.addAll(findClient.getOrders());
-            clients.put(key, findClient);
+            // it exists, just copy its orders
+            ordersMap.putAll(findClient.getOrders());
         }
-        findClient.setOrders(orders);
-        System.out.println();
+
+        // now, just add the required orders and set them for the client
+        for (Order o : orders) {
+            ordersMap.put(o.getKey(), new Order(o));
+        }
+        findClient.setOrders(ordersMap);
+
+        clients.put(key, findClient);
     }
 
     @Override
@@ -117,29 +119,12 @@ public class Storage implements Store {
         Client findClient = clients.get(Objects.requireNonNull(key));
         return findClient == null ? null : new Client(findClient);
     }
-    
+
     @Override
     public Iterator<Client> iterator() {
-        //TODO: Please, would you specify a test that breaks my iterator?
         final Collection<Client> clients =
                 Collections.unmodifiableCollection(this.clients.values());
-        final Iterator<Client> it = clients.iterator();
-        return new Iterator<Client>() {
-            @Override
-            public boolean hasNext() {
-                return it.hasNext();
-            }
-
-            @Override
-            public Client next() {
-                return it.next();
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+        return clients.iterator();
     }
 
     /**
@@ -152,7 +137,6 @@ public class Storage implements Store {
         //TODO: if you continue, we would have no options but to load whatever they sent us
         // may be the storage and the loader will be separate? There's no strict requirements
         // just would like to understand the behaviour.
-
 
         // HashMap<ClientKey, Client> extData = parser.getDataFromExtSystem();
 

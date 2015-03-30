@@ -4,9 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -14,18 +12,15 @@ public class Client implements Externalizable {
 
     private ClientKey key;
     private String comment;
-
     private Map<OrderKey, Order> orders;
 
     protected Client() {
     }
 
     public Client(Client client) {
-        this(client.getKey(),
-                client.getComment());
-        List<Order> orders = client.getOrders();
-        for (Order order : orders) {
-            this.orders.put(order.getKey(), order);
+        this(client.getKey(), client.getComment());
+        for (Map.Entry<OrderKey, Order> e : client.orders.entrySet()) {
+            orders.put(e.getKey(), new Order(e.getValue()));
         }
     }
 
@@ -39,20 +34,12 @@ public class Client implements Externalizable {
         this.orders = Objects.requireNonNull(orders);
     }
 
-    public List<Order> getOrders() {
-        List<Order> result = new ArrayList<Order>();
-        for (Order o : orders.values()) {
-            result.add(new Order(o));
-        }
-        return result;
+    public Map<OrderKey, Order> getOrders() {
+        return orders;
     }
 
-    public void setOrders(List<Order> source) {
-        Objects.requireNonNull(source);
-        orders.clear();
-        for (Order o : source) {
-            this.orders.put(o.getKey(), o);
-        }
+    public void setOrders(Map<OrderKey, Order> orders) {
+        this.orders = orders;
     }
 
     public ClientKey getKey() {
@@ -94,13 +81,29 @@ public class Client implements Externalizable {
     public void writeExternal(ObjectOutput out) throws IOException {
         key.writeExternal(out);
         out.writeObject(comment);
+
+        out.writeInt(orders.size());
+        for (Map.Entry<OrderKey, Order> e : orders.entrySet()) {
+            e.getKey().writeExternal(out);
+            e.getValue().writeExternal(out);
+        }
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException,
             ClassNotFoundException {
-        this.key = (ClientKey) in.readObject();
+        key = new ClientKey();
+        key.readExternal(in);
         this.comment = (String) in.readObject();
+
+        int size = in.readInt();
+        for (int i = 0; i < size; i++) {
+            OrderKey key = new OrderKey();
+            key.readExternal(in);
+            Order order = new Order();
+            order.readExternal(in);
+            orders.put(key, order);
+        }
     }
 
 }

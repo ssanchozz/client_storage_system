@@ -129,7 +129,7 @@ public class StorageTest {
         }
         
         @Override
-        public void setOrders(List<Order> source) {
+        public void setOrders(Map<OrderKey, Order> orders) {
             throw new UnsupportedOperationException(); 
         }
         

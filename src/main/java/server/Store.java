@@ -1,7 +1,7 @@
 package server;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import client.entities.Client;
 import client.entities.ClientKey;
@@ -12,7 +12,7 @@ public interface Store {
 
     void addOrders(ClientKey key, Order order);
 
-    void addOrders(ClientKey key, List<Order> orders);
+    void addOrders(ClientKey key, Collection<Order> orders);
 
     Client find(ClientKey key);
 
