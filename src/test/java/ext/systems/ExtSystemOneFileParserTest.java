@@ -10,11 +10,13 @@ public class ExtSystemOneFileParserTest {
 
     @Before
     public void setup() {
-        parser = new ExtSystemOneFileParser();
+        parser = new ExtSystemOneFileParser(";");
     }
 
     @Test
     public void testParse() {
+        //FIXME: use files instead! this is quite ugly
+        
         String line1 = "John;Doe;12QA5;1;2014-06-06;order1";
         String line2 = "John;Doe;12QA5;1;2014-06-06;duplicated order1";
         String line3 = "what a mess!";
