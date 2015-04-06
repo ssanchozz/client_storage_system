@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+//import org.apache.logging.log4j.LogManager;
+//import org.apache.logging.log4j.Logger;
 
 import utils.StringUtils;
 import client.entities.Client;
@@ -27,8 +27,8 @@ public class ExtSystemOneFileParser implements Parser {
     private static final int DATE_IDX = 4;
     private static final int COMMENT_IDX = 5;
 
-    private static final Logger logger =
-            LogManager.getLogger(ExtSystemOneFileParser.class);
+//    private static final Logger logger =
+//            LogManager.getLogger(ExtSystemOneFileParser.class);
 
     private final String separator;
 
