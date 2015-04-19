@@ -121,6 +121,16 @@ public class Storage implements Store {
     }
 
     @Override
+    public synchronized Client getClient(ClientKey key) {
+        Client findClient = clients.get(Objects.requireNonNull(key));
+        if (findClient != null) {
+            findClient = new Client(findClient);
+            clients.remove(key);
+        }
+        return findClient == null ? null : findClient;
+    }
+
+    @Override
     public Iterator<Client> iterator() {
         final Collection<Client> clients =
                 Collections.unmodifiableCollection(this.clients.values());
@@ -140,6 +150,10 @@ public class Storage implements Store {
 
         // HashMap<ClientKey, Client> extData = parser.getDataFromExtSystem();
 
+    }
+
+    public String toString() {
+        return clients.toString();
     }
 
 }

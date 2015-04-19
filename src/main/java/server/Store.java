@@ -16,5 +16,7 @@ public interface Store {
 
     Client find(ClientKey key);
 
+    Client getClient(ClientKey key);
+
     Iterator<Client> iterator();
 }

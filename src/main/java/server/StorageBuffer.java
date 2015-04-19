@@ -3,6 +3,8 @@ package server;
 import client.entities.Client;
 import client.entities.ClientKey;
 
+import java.util.Objects;
+
 /**
  * Provides a buffer with the limited capacity to store clients and their details.
  * Due to its nature, the buffer will block the current thread if more than the configured
@@ -20,8 +22,8 @@ public class StorageBuffer {
     private boolean empty, full;
 
     public StorageBuffer(int bufferLimit, Store store) {
-        this.store = store;
-        this.bufferLimit = bufferLimit;
+        this.store = Objects.requireNonNull(store);
+        this.bufferLimit = Objects.requireNonNull(bufferLimit);
         this.empty = true;
         this.full = false;
     }
@@ -32,6 +34,7 @@ public class StorageBuffer {
                 wait();
             } catch (InterruptedException e) {}
         }
+        store.add(Objects.requireNonNull(client));
         counter++;
         System.out.println("from put: counter = " + counter);
         if (counter == bufferLimit) {
@@ -51,7 +54,10 @@ public class StorageBuffer {
                 wait();
             } catch (InterruptedException e) {}
         }
-        counter--;
+        Client findClient = store.getClient(Objects.requireNonNull(key));
+        if (findClient != null) {
+            counter--;
+        }
         System.out.println("from get: counter = " + counter);
         if (counter == 0) {
             System.out.println("buffer is empty!");
@@ -62,7 +68,11 @@ public class StorageBuffer {
             full = false;
             notifyAll();
         }
-        return null;
+        return findClient;
+    }
+
+    public String toString() {
+        return store.toString();
     }
 
 }

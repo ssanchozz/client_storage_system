@@ -5,18 +5,21 @@ import client.entities.ClientKey;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class StorageBufferTest {
 
     private StorageBuffer storageBuffer;
     private Storage storage;
+    private List<ClientKey> keys;
 
     @Before
     public void setup() {
         storage = new Storage("");
         storageBuffer = new StorageBuffer(10, storage);
-
+        keys = generateClientsKeys();
     }
 
     @Test
@@ -29,6 +32,15 @@ public class StorageBufferTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private List<ClientKey> generateClientsKeys() {
+        Random r = new Random();
+        List<ClientKey> keys = new ArrayList<ClientKey>();
+        for (int i=0; i < 10; i++) {
+            keys.add(new ClientKey("Alex", "Bogd", ("AAA"+r.nextInt(10))+r.nextInt(10)));
+        }
+        return keys;
     }
 
     class StorageGetter implements Runnable {
@@ -44,10 +56,10 @@ public class StorageBufferTest {
             System.out.println("StorageGetter started!");
             Random random = new Random();
             try {
-                for (int i = 0; i < 100; i++) {
-                    ClientKey key = new ClientKey("Alex", "Bogd", "AAA55");
+                for (; true;) {
                     Thread.sleep(random.nextInt(1500));
-                    Client client = sb.get(key);
+                    Client client = sb.get(keys.get(random.nextInt(10)));
+                    System.out.println(sb);
                 }
             } catch (InterruptedException e) {}
         }
@@ -67,11 +79,16 @@ public class StorageBufferTest {
             System.out.println("StoragePutter started!");
             Random random = new Random();
             try {
-                for (int i = 0; i < 100; i++) {
-                    ClientKey key = new ClientKey("Alex", "Bogd", "AAA55");
+                for (; true;) {
+                    ClientKey key = keys.get(random.nextInt(10));
+                    Client foundClient = storage.find(key);
+                    if (foundClient != null) {
+                        continue;
+                    }
                     Client client = new Client(key, "");
                     Thread.sleep(random.nextInt(1000));
                     sb.put(client);
+                    System.out.println(sb);
                 }
             } catch (InterruptedException e) {}
         }
